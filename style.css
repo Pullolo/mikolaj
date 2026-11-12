@@ -233,7 +233,10 @@ button:focus-visible { outline: 3px dashed var(--gold); outline-offset: 4px; }
 .note[hidden] { display: none; }
 .note__label { margin: 0 0 16px; font-size: 10px; color: var(--pink-dk); }
 .note__text { margin: 0; font-size: clamp(14px, 4.4vw, 20px); line-height: 1.8; color: var(--pink-dk); }
-.note__sign { margin: 14px 0 0; font-family: var(--mono); font-size: 28px; text-align: right; }
+.note__body { margin: 18px 0 0; text-align: left; font-family: var(--mono); font-size: 23px; line-height: 1.2; color: var(--bg); }
+.note__body p { margin: 0 0 14px; }
+.note__close { margin: 6px 0 0; text-align: left; font-family: var(--mono); font-size: 25px; color: var(--pink-dk); }
+.note__sign { margin: 4px 0 0; font-family: var(--mono); font-size: 28px; text-align: right; }
 
 /* ─── New UI bits ─── */
 .btn--gold {
