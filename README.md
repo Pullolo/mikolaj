@@ -2,11 +2,28 @@
 
 A tiny retro arcade made for Mikołaj.
 
-1. **Title screen** — "Hello, my beloved Mikołaj!" and a clickable icon slot.
-2. **Level 1: Catch my ♥** — catch 12 falling hearts, dodge the storm clouds
-   (3 lives). Drag on touch screens; arrow keys / A-D or the mouse on desktop.
-3. **Rewards** — six treasure chests, each revealing a picture. Opening all
-   six unlocks a final note.
+1. **Title screen** — "Hello, my beloved Mikołaj!", a clickable icon slot
+   (→ level select) and a **★ Treasures Unlocked** button.
+2. **Six levels**, each guarding one memory and each harder in its own way:
+
+   | # | Name | Difficulty | Twist |
+   |---|------|------------|-------|
+   | 1 | First Hello | ★ Easy | 8 hearts, no storm clouds |
+   | 2 | Butterflies | ★★ Easy | hearts flutter side to side |
+   | 3 | Rainy Day | ★★★ Normal | lots of storm clouds |
+   | 4 | Windy Walk | ★★★ Normal | gusts push everything sideways |
+   | 5 | Racing Hearts | ★★★★ Hard | 15 hearts in 35 seconds |
+   | 6 | Forever | ★★★★★ Love Boss | tiny basket + wind + wobble + storms |
+
+   Each level unlocks after the previous one. Drag on touch screens;
+   arrow keys / A-D or the mouse on desktop.
+3. **Treasures Unlocked** — six chests, locked until their level is beaten.
+   Opening all six reveals the final note.
+
+Progress is saved in the browser, so he can come back later
+("reset progress" at the bottom of the treasures page starts over).
+Level names, difficulty and tuning live in the `LEVELS` list at the top of
+`script.js`.
 
 ```
 index.html   screens and text (edit spots are marked with <!-- EDIT -->)

@@ -235,6 +235,70 @@ button:focus-visible { outline: 3px dashed var(--gold); outline-offset: 4px; }
 .note__text { margin: 0; font-size: clamp(14px, 4.4vw, 20px); line-height: 1.8; color: var(--pink-dk); }
 .note__sign { margin: 14px 0 0; font-family: var(--mono); font-size: 28px; text-align: right; }
 
+/* ─── New UI bits ─── */
+.btn--gold {
+  background: var(--gold); color: #2a1a00; font-size: 11px;
+  box-shadow: inset -4px -4px 0 var(--gold-dk), 4px 4px 0 #000;
+}
+.btn--gold:active { box-shadow: inset -4px -4px 0 var(--gold-dk), 2px 2px 0 #000; }
+.pill { display: inline-block; margin-left: 6px; padding: 3px 5px; background: #2a1a00; color: var(--gold); font-size: 9px; }
+.bar__sub { margin: 8px 0 0; font-size: 10px; color: var(--pink); }
+.row { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; }
+
+.shake { animation: shake .3s steps(3) !important; }
+@keyframes shake { 33% { transform: translateX(-5px); } 66% { transform: translateX(5px); } }
+
+/* Level select */
+.levels {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+  width: min(100%, 680px);
+}
+@media (max-width: 560px) { .levels { grid-template-columns: 1fr; } }
+.level {
+  width: 100%; display: flex; align-items: center; gap: 12px;
+  padding: 12px; text-align: left;
+  background: var(--bg2); border: 3px solid var(--ink);
+  box-shadow: 5px 5px 0 #000;
+}
+.level:hover { border-color: var(--pink); }
+.level:active { transform: translate(2px, 2px); box-shadow: 3px 3px 0 #000; }
+.level__num {
+  flex: 0 0 44px; height: 44px; display: grid; place-items: center;
+  background: var(--pink); color: #fff; font-size: 16px;
+  box-shadow: inset -3px -3px 0 var(--pink-dk);
+}
+.level__body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+.level__name { font-size: 11px; line-height: 1.4; }
+.level__meta { font-family: var(--mono); font-size: 18px; color: #c9bff5; line-height: 1; }
+.level__stars { color: var(--gold); letter-spacing: 1px; }
+.level__state { flex: 0 0 auto; font-size: 8px; color: var(--cyan); }
+.level.is-cleared { border-color: var(--gold); }
+.level.is-cleared .level__num { background: var(--gold); color: #2a1a00; box-shadow: inset -3px -3px 0 var(--gold-dk); }
+.level.is-cleared .level__state { color: var(--gold); }
+.level.is-locked { opacity: .55; border-style: dashed; border-color: #6c63a3; }
+.level.is-locked .level__num { background: #3a2d7a; box-shadow: none; font-size: 18px; }
+.level.is-locked .level__state { color: #8a80c0; }
+
+/* Locked chests: grey stone with a padlock */
+.chest.is-locked {
+  animation: none;
+  background:
+    linear-gradient(#c0c0d0 0 0) 50% 52% / 26% 22% no-repeat,
+    radial-gradient(circle at 50% 42%, transparent 9%, #c0c0d0 9.5% 14%, transparent 14.5%) no-repeat,
+    repeating-linear-gradient(90deg, #4a4470 0 22%, #2e2950 22% 25%);
+  filter: saturate(.6);
+}
+.chest.is-locked .chest__lid { background: repeating-linear-gradient(90deg, #5a5488 0 22%, #2e2950 22% 25%); }
+.chest.is-locked .chest__label { color: #c9bff5; }
+
+.toast { margin: 0; min-height: 1.2em; font-family: var(--mono); font-size: 22px; color: var(--gold); line-height: 1.1; }
+
+.reset {
+  background: none; border: 0; padding: 6px;
+  font-family: var(--mono); font-size: 16px; color: #6c63a3; text-decoration: underline;
+}
+
 /* ─── Viewer ─── */
 .viewer {
   position: fixed; inset: 0; z-index: 40;

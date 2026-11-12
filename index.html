@@ -22,7 +22,7 @@
       ♪ ON
     </button>
 
-    <!-- ═════════════ SCREEN 1 · TITLE ═════════════ -->
+    <!-- ═════════════ TITLE ═════════════ -->
     <section class="screen is-active" id="screen-title" aria-labelledby="hello">
       <p class="blink tag">★ 1 PLAYER ★</p>
       <h1 class="hello" id="hello">
@@ -34,24 +34,45 @@
         EDIT: icon slot. Drop a square PNG at img/icon.png and it will
         replace the pixel heart automatically.
       -->
-      <button class="icon-slot" id="start" type="button" aria-label="Start the game">
+      <button class="icon-slot" id="start" type="button" aria-label="Start: choose a level">
         <img class="icon-slot__img" src="img/icon.png" alt="" onerror="this.remove()" />
         <span class="icon-slot__heart" aria-hidden="true"></span>
       </button>
 
       <p class="blink prompt">▶ TAP THE ICON TO START ◀</p>
+
+      <button class="btn btn--gold" id="go-treasures" type="button">
+        ★ TREASURES UNLOCKED <span class="pill" id="title-count">0/6</span>
+      </button>
+
       <p class="credit">© 2026 MAXINE GAMES · INSERT COIN</p>
     </section>
 
-    <!-- ═════════════ SCREEN 2 · MINI-GAME ═════════════ -->
+    <!-- ═════════════ LEVEL SELECT ═════════════ -->
+    <section class="screen" id="screen-map" aria-labelledby="map-title">
+      <header class="bar">
+        <h2 class="bar__title" id="map-title">SELECT LEVEL</h2>
+      </header>
+      <p class="sub">Each level guards one memory.</p>
+      <!-- Filled in by script.js from the LEVELS list. -->
+      <ol class="levels" id="levels"></ol>
+      <div class="row">
+        <button class="btn btn--ghost" data-go="screen-title" type="button">◀ TITLE</button>
+        <button class="btn btn--ghost" data-go="screen-treasures" type="button">★ TREASURES</button>
+      </div>
+    </section>
+
+    <!-- ═════════════ GAME ═════════════ -->
     <section class="screen" id="screen-game" aria-labelledby="game-title">
       <header class="bar">
-        <h2 class="bar__title" id="game-title">LEVEL 1: CATCH MY ♥</h2>
+        <h2 class="bar__title" id="game-title">LEVEL 1</h2>
+        <p class="bar__sub" id="game-sub"></p>
       </header>
 
       <div class="hud" aria-live="polite">
-        <span>♥ <b id="hud-score">0</b>/<span id="hud-goal">12</span></span>
-        <span id="hud-lives" aria-label="Lives">✚✚✚</span>
+        <span>♥ <b id="hud-score">0</b>/<span id="hud-goal">0</span></span>
+        <span id="hud-time" hidden>⏱ <b id="hud-secs">0</b></span>
+        <span id="hud-lives" aria-label="Lives">♥♥♥</span>
       </div>
 
       <div class="cabinet">
@@ -59,25 +80,22 @@
 
         <div class="overlay" id="overlay">
           <p class="overlay__title" id="overlay-title">READY?</p>
-          <p class="overlay__text" id="overlay-text">
-            Catch 12 hearts.<br />Dodge the storm clouds!<br /><br />
-            <span class="only-touch">Drag your finger to move.</span>
-            <span class="only-mouse">Use ← → or the mouse.</span>
-          </p>
-          <button class="btn" id="play" type="button">PLAY</button>
+          <p class="overlay__text" id="overlay-text"></p>
+          <button class="btn" id="ov-main" type="button">PLAY</button>
+          <button class="btn btn--ghost" id="ov-alt" type="button" hidden></button>
         </div>
       </div>
 
-      <button class="btn btn--ghost" id="back-title" type="button">◀ TITLE</button>
+      <button class="btn btn--ghost" data-go="screen-map" type="button">◀ LEVELS</button>
     </section>
 
-    <!-- ═════════════ SCREEN 3 · REWARDS ═════════════ -->
-    <section class="screen" id="screen-rewards" aria-labelledby="rewards-title">
+    <!-- ═════════════ TREASURES UNLOCKED ═════════════ -->
+    <section class="screen" id="screen-treasures" aria-labelledby="treasures-title">
       <header class="bar">
-        <h2 class="bar__title" id="rewards-title">★ YOU WIN! ★</h2>
+        <h2 class="bar__title" id="treasures-title">★ TREASURES UNLOCKED ★</h2>
       </header>
-      <p class="sub">Six treasures unlocked. Open them all!</p>
-      <p class="counter"><b id="opened">0</b>/6 OPENED</p>
+      <p class="sub" id="treasures-sub">Beat a level to unlock its treasure.</p>
+      <p class="counter"><b id="unlocked">0</b>/6 UNLOCKED · <b id="opened">0</b>/6 OPENED</p>
 
       <!--
         EDIT: the six pictures live at img/1.png … img/6.png.
@@ -93,13 +111,19 @@
         <li><button class="chest" type="button" data-src="img/6.png" data-cap="Memory #6"><span class="chest__lid"></span><span class="chest__label">06</span></button></li>
       </ul>
 
+      <p class="toast" id="toast" role="status" aria-live="polite"></p>
+
       <div class="note" id="note" hidden>
         <p class="note__label">★ SECRET MESSAGE UNLOCKED ★</p>
         <p class="note__text">Kocham cię, aking mahal &lt;3</p>
         <p class="note__sign">-Maxine</p>
       </div>
 
-      <button class="btn btn--ghost" id="replay" type="button">↻ PLAY AGAIN</button>
+      <div class="row">
+        <button class="btn btn--ghost" data-go="screen-title" type="button">◀ TITLE</button>
+        <button class="btn btn--ghost" data-go="screen-map" type="button">▶ LEVELS</button>
+      </div>
+      <button class="reset" id="reset" type="button">reset progress</button>
     </section>
 
     <!-- ═════════════ PICTURE VIEWER ═════════════ -->
