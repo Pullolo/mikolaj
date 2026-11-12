@@ -1,17 +1,12 @@
-# Plates
+# Pictures
 
-Drop the four PNGs in here, named exactly:
+The six rewards are read from here:
 
 ```
-img/1.png
-img/2.png
-img/3.png
-img/4.png
+img/1.png … img/6.png   ← replace these placeholders with your own PNGs (same names)
+img/icon.png            ← optional: replaces the pixel heart on the title screen
 ```
 
-Until a file exists, its place in the letter shows a dashed placeholder box
-naming the file it is waiting for. Nothing else needs changing — the page
-picks each image up as soon as it is present.
-
-Captions and the letter text live in `index.html`, marked with
-`<!-- EDIT -->` comments.
+Square images look best in the chest grid; any shape works in the viewer.
+If a file goes missing, the site draws a numbered placeholder instead.
+Captions are the `data-cap="…"` attributes on the chests in `index.html`.

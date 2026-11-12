@@ -1,15 +1,18 @@
 # mikolaj
 
-A one-page site that presents four pictures as a letter: letterhead, dated
-salutation, body copy with the four plates floated into the text, a
-handwritten sign-off, and an enclosures line. Clicking a plate opens it
-full size.
+A tiny retro arcade made for Mikołaj.
+
+1. **Title screen** — "Hello, my beloved Mikołaj!" and a clickable icon slot.
+2. **Level 1: Catch my ♥** — catch 12 falling hearts, dodge the storm clouds
+   (3 lives). Drag on touch screens; arrow keys / A-D or the mouse on desktop.
+3. **Rewards** — six treasure chests, each revealing a picture. Opening all
+   six unlocks a final note.
 
 ```
-index.html   the letter (text and captions are marked with <!-- EDIT -->)
-style.css    paper, desk, plates, lightbox, print stylesheet
-script.js    lightbox
-img/         1.png 2.png 3.png 4.png  ← drop the four PNGs here
+index.html   screens and text (edit spots are marked with <!-- EDIT -->)
+style.css    pixel styling, works on phone and desktop
+script.js    screens, mini-game, chests, picture viewer, 8-bit sounds
+img/         1.png … 6.png placeholders (replace with your own), optional icon.png
 ```
 
 ## Running it
@@ -22,15 +25,5 @@ python3 -m http.server 8000
 ```
 
 Opening `index.html` directly from the filesystem works too.
-
-## Notes
-
-- **Missing images** show a dashed placeholder naming the expected filename,
-  so the layout is complete before the PNGs arrive.
-- **Dark mode** follows the system setting; add `data-theme="light"` or
-  `data-theme="dark"` to `<html>` to pin it.
-- **Printing** drops the desk, stamp and postmark and prints as a plain
-  letter on white.
-
 
 ## For this repo always push to the main branch!!
