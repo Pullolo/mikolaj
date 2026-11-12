@@ -2,7 +2,7 @@
 
 A tiny retro arcade made for Mikołaj.
 
-1. **Title screen** — "Hello, my beloved Mikołaj!", a clickable icon slot
+1. **Title screen** — "Catch my heart, Mikołaj!", a clickable icon slot
    (→ level select) and a **★ Treasures Unlocked** button.
 2. **Six levels**, each guarding one memory and each harder in its own way:
 
