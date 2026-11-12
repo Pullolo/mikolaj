@@ -2,244 +2,168 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mikołaj — A Letter in Four Pictures</title>
-    <meta
-      name="description"
-      content="A letter, typeset as a letter, with four photographs enclosed."
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>FOR MIKOŁAJ — Press Start</title>
+    <meta name="description" content="A little retro arcade made for Mikołaj." />
+    <meta name="theme-color" content="#0f0f1e" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Caveat:wght@500;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap&subset=latin,latin-ext"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <a class="skip" href="#letter">Skip to the letter</a>
+    <!-- CRT scanlines + vignette, purely decorative -->
+    <div class="crt" aria-hidden="true"></div>
 
-    <main class="desk">
-      <article class="sheet" id="letter">
-        <!-- ── stamp & postmark ─────────────────────────────────── -->
-        <div class="stamp" aria-hidden="true">
-          <span class="stamp__mark">M</span>
-          <span class="stamp__value">4 plates</span>
-        </div>
-        <div class="postmark" aria-hidden="true">
-          <span>sent</span>
-          <strong>2026</strong>
-          <span>by hand</span>
-        </div>
+    <button
+      id="sound-toggle"
+      class="sound"
+      type="button"
+      aria-pressed="true"
+      title="Sound on / off"
+    >
+      <span class="sound__icon" aria-hidden="true">♪</span>
+      <span class="sound__text">SFX ON</span>
+    </button>
 
-        <!-- ── letterhead ───────────────────────────────────────── -->
-        <header class="head">
-          <p class="head__from">
-            <!-- EDIT: sender -->
-            Mikołaj
-            <span class="head__addr">· ul. Przykładowa 4 · Kraków</span>
-          </p>
-          <p class="head__date">
-            <!-- EDIT: date -->
-            <time datetime="2026-11-09">9 November 2026</time>
-          </p>
+    <main class="cabinet">
+      <!-- ══════════════ SCREEN 1 — TITLE ══════════════ -->
+      <section id="screen-title" class="screen is-active" aria-label="Title screen">
+        <div class="sky" aria-hidden="true"></div>
+
+        <p class="kicker">PLAYER 1 READY</p>
+
+        <h1 class="greeting">
+          <span class="greeting__line" data-type="HELLO, MY BELOVED"></span>
+          <span class="greeting__line greeting__line--big" data-type="MIKOŁAJ!"></span>
+        </h1>
+
+        <p class="blurb">
+          <!-- EDIT: your own words here -->
+          I made you a tiny arcade. Beat the game and six memories unlock.
+        </p>
+
+        <!-- the cartridge slot: drop img/icon.png in to replace the pixel heart -->
+        <button id="start-slot" class="slot" type="button">
+          <span class="slot__inner">
+            <span class="slot__art" id="slot-art">
+              <span class="slot__ph" aria-hidden="true">?</span>
+            </span>
+          </span>
+          <span class="slot__caption">INSERT CARTRIDGE</span>
+          <span class="slot__file">img/icon.png</span>
+        </button>
+
+        <p class="hint blink">▲ TAP TO START ▲</p>
+      </section>
+
+      <!-- ══════════════ SCREEN 2 — THE GAME ══════════════ -->
+      <section id="screen-game" class="screen" aria-label="Mini-game" hidden>
+        <header class="bar">
+          <button class="btn btn--ghost" type="button" data-goto="title">‹ BACK</button>
+          <h2 class="bar__title">STAGE 1 · HEART CATCH</h2>
         </header>
 
-        <h1 class="title">A Letter in Four Pictures</h1>
+        <div class="pane">
+        <div class="hud">
+          <span class="hud__item">
+            <b>HEARTS</b>
+            <span id="hud-score">0</span>/<span id="hud-goal">12</span>
+          </span>
+          <span class="hud__item hud__lives">
+            <b>LIVES</b>
+            <span id="hud-lives" aria-live="polite">♥♥♥</span>
+          </span>
+        </div>
 
-        <!-- ── the letter ───────────────────────────────────────── -->
-        <p class="salutation">Dear friend,</p>
+        <div class="stage">
+          <canvas id="game" width="240" height="180" aria-label="Catch the falling hearts"></canvas>
 
-        <p class="lede">
-          <!-- EDIT: opening paragraph -->
-          I have been meaning to write for some time, and kept putting it off
-          for the same reason people always do — the feeling that nothing much
-          had happened worth the postage. Then I went looking through this
-          year's pictures and found four I could not stop returning to. So this
-          is that letter, and the pictures are enclosed with it, in the order
-          they happened.
-        </p>
-
-        <figure class="plate" data-side="right">
-          <div class="plate__frame">
-            <img
-              src="img/1.png"
-              alt="The first enclosed picture."
-              onerror="this.closest('.plate').classList.add('is-missing')"
-            />
-            <div class="plate__ph" aria-hidden="true">
-              <span class="plate__ph-name">img/1.png</span>
-              <span class="plate__ph-hint">drop your PNG here</span>
-            </div>
+          <div class="stage__overlay" id="game-overlay">
+            <p class="stage__title" id="overlay-title">HEART CATCH</p>
+            <p class="stage__text" id="overlay-text">
+              Catch <b>12</b> hearts.<br />Dodge the spiky ones.
+            </p>
+            <button class="btn" type="button" id="overlay-btn">START</button>
           </div>
-          <figcaption>
-            <!-- EDIT: caption 1 -->
-            The morning everything was still frozen, and nobody else had come
-            out yet.
-          </figcaption>
-        </figure>
+        </div>
 
-        <p>
+        <div class="pad" id="pad">
+          <button class="pad__btn" type="button" data-dir="-1">◀</button>
+          <p class="pad__hint">drag the screen, use ◀ ▶, or the arrow keys</p>
+          <button class="pad__btn" type="button" data-dir="1">▶</button>
+        </div>
+        </div>
+      </section>
+
+      <!-- ══════════════ SCREEN 3 — THE VAULT ══════════════ -->
+      <section id="screen-vault" class="screen" aria-label="The vault" hidden>
+        <header class="bar">
+          <button class="btn btn--ghost" type="button" data-goto="game">‹ ARCADE</button>
+          <h2 class="bar__title">THE VAULT</h2>
+        </header>
+
+        <div class="pane">
+        <p class="vault__intro">
           <!-- EDIT -->
-          The first one is from the beginning of the year, when the cold was
-          still the kind you could lean against. I remember thinking the light
-          would not hold for more than a minute, and it didn't — I took three
-          frames and two of them are useless. This is the third. Everything
-          that makes it work is accidental, which I have decided to stop being
-          embarrassed about.
+          Six memories, sealed. Tap one to open it.
         </p>
 
-        <p>
-          Afterwards we walked back the long way and argued pleasantly about
-          whether a photograph counts as a memory or only as a receipt for one.
-          I still think it is the first thing. You will tell me I am wrong, and
-          you will do it at length, and I am looking forward to it.
+        <ul class="vault" id="vault">
+          <!-- src = the PNG this tile reveals · label = what it says while sealed -->
+          <li>
+            <button class="tile" type="button" data-src="img/1.png" data-caption="Memory 01">
+              <span class="tile__face"><span class="tile__num">01</span><span class="tile__seal">?</span></span>
+            </button>
+          </li>
+          <li>
+            <button class="tile" type="button" data-src="img/2.png" data-caption="Memory 02">
+              <span class="tile__face"><span class="tile__num">02</span><span class="tile__seal">?</span></span>
+            </button>
+          </li>
+          <li>
+            <button class="tile" type="button" data-src="img/3.png" data-caption="Memory 03">
+              <span class="tile__face"><span class="tile__num">03</span><span class="tile__seal">?</span></span>
+            </button>
+          </li>
+          <li>
+            <button class="tile" type="button" data-src="img/4.png" data-caption="Memory 04">
+              <span class="tile__face"><span class="tile__num">04</span><span class="tile__seal">?</span></span>
+            </button>
+          </li>
+          <li>
+            <button class="tile" type="button" data-src="img/5.png" data-caption="Memory 05">
+              <span class="tile__face"><span class="tile__num">05</span><span class="tile__seal">?</span></span>
+            </button>
+          </li>
+          <li>
+            <button class="tile" type="button" data-src="img/6.png" data-caption="Memory 06">
+              <span class="tile__face"><span class="tile__num">06</span><span class="tile__seal">?</span></span>
+            </button>
+          </li>
+        </ul>
+
+        <p class="vault__done" id="vault-done" hidden>
+          <!-- EDIT: the note that appears once all six are open -->
+          ★ ALL SIX UNLOCKED ★<br /><span>Happy everything, Mikołaj. — Y.</span>
         </p>
-
-        <p>
-          That was more or less how the first months went: too cold to do
-          anything ambitious, and just bright enough to make me want to. I got
-          into the habit of carrying the camera on errands, which is how most
-          of what follows came to exist.
-        </p>
-
-        <figure class="plate" data-side="left">
-          <div class="plate__frame">
-            <img
-              src="img/2.png"
-              alt="The second enclosed picture."
-              onerror="this.closest('.plate').classList.add('is-missing')"
-            />
-            <div class="plate__ph" aria-hidden="true">
-              <span class="plate__ph-name">img/2.png</span>
-              <span class="plate__ph-hint">drop your PNG here</span>
-            </div>
-          </div>
-          <figcaption>
-            <!-- EDIT: caption 2 -->
-            Later, somewhere between two towns whose names I never wrote down.
-          </figcaption>
-        </figure>
-
-        <p>
-          <!-- EDIT -->
-          The second belongs to the spring, when I was travelling more than was
-          strictly sensible. I have no note of where it was taken. What I do
-          remember is the quiet just after — the particular quiet of a place
-          that is used to people passing through and has stopped making a fuss
-          about it.
-        </p>
-
-        <p>
-          I had meant to keep a proper record of that trip and managed four
-          entries, all of them about food. Everything else I would have to
-          reconstruct from pictures, which is either an argument for taking
-          more of them or an argument against trusting them. I have not decided
-          which.
-        </p>
-
-        <figure class="plate" data-side="right">
-          <div class="plate__frame">
-            <img
-              src="img/3.png"
-              alt="The third enclosed picture."
-              onerror="this.closest('.plate').classList.add('is-missing')"
-            />
-            <div class="plate__ph" aria-hidden="true">
-              <span class="plate__ph-name">img/3.png</span>
-              <span class="plate__ph-hint">drop your PNG here</span>
-            </div>
-          </div>
-          <figcaption>
-            <!-- EDIT: caption 3 -->
-            Summer, and the one evening of it I would keep if I had to choose.
-          </figcaption>
-        </figure>
-
-        <p>
-          <!-- EDIT -->
-          The third is the one I would send if I were only allowed to send one.
-          It is not the best of the four by any measure I could defend, but it
-          is the only one where I can still hear what was being said just
-          outside the frame.
-        </p>
-
-        <p>
-          We stayed out far later than we meant to that evening. Someone had
-          brought the wrong kind of wine and nobody minded; the whole thing had
-          the unhurried shapelessness that only happens when no one is due
-          anywhere in the morning. I took exactly one picture all night, which
-          I think was the correct number.
-        </p>
-
-        <p>
-          And then the year turned, as it does, faster at the end than at the
-          beginning. There was a stretch in the autumn I can barely account for
-          — work, mostly, and a long run of weather that made everything look
-          the same.
-        </p>
-
-        <figure class="plate" data-side="full">
-          <div class="plate__frame">
-            <img
-              src="img/4.png"
-              alt="The fourth enclosed picture."
-              onerror="this.closest('.plate').classList.add('is-missing')"
-            />
-            <div class="plate__ph" aria-hidden="true">
-              <span class="plate__ph-name">img/4.png</span>
-              <span class="plate__ph-hint">drop your PNG here</span>
-            </div>
-          </div>
-          <figcaption>
-            <!-- EDIT: caption 4 -->
-            The last one, taken on the way home, with no intention behind it at
-            all.
-          </figcaption>
-        </figure>
-
-        <p>
-          <!-- EDIT -->
-          The fourth was not meant to be anything. I took it on the way home
-          with cold hands and did not look at it for months. It has turned out
-          to be the one I like best, and I suspect that is the whole lesson of
-          the year, delivered rather more neatly than I deserved.
-        </p>
-
-        <p>
-          Write back when you have a moment — properly, not in a single line.
-          Tell me what your four would be.
-        </p>
-
-        <!-- ── sign-off ─────────────────────────────────────────── -->
-        <footer class="close">
-          <p class="close__valediction">Yours, as ever,</p>
-          <p class="close__sign">Mikołaj</p>
-          <p class="close__ps">
-            <span>P.S.</span> Click any of the four to see it full size.
-          </p>
-        </footer>
-
-        <p class="encl">Enclosures: four plates.</p>
-      </article>
+        </div>
+      </section>
     </main>
 
-    <!-- ── lightbox ───────────────────────────────────────────── -->
-    <div
-      class="lightbox"
-      id="lightbox"
-      role="dialog"
-      aria-modal="true"
-      aria-label="Enclosed picture, full size"
-      hidden
-    >
-      <button class="lightbox__close" type="button" aria-label="Close">×</button>
-      <figure class="lightbox__inner">
-        <img class="lightbox__img" src="" alt="" />
-        <figcaption class="lightbox__cap"></figcaption>
+    <!-- ══════════════ full-size viewer ══════════════ -->
+    <div class="viewer" id="viewer" role="dialog" aria-modal="true" aria-label="Memory" hidden>
+      <button class="viewer__close" type="button" aria-label="Close">×</button>
+      <figure class="viewer__inner">
+        <img class="viewer__img" id="viewer-img" src="" alt="" />
+        <figcaption class="viewer__cap" id="viewer-cap"></figcaption>
       </figure>
     </div>
 
-    <script src="script.js" defer></script>
+    <script src="game.js"></script>
+    <script src="app.js"></script>
   </body>
 </html>
