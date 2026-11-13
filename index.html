@@ -72,6 +72,7 @@
       <div class="hud" aria-live="polite">
         <span>♥ <b id="hud-score">0</b>/<span id="hud-goal">0</span></span>
         <span id="hud-time" hidden>⏱ <b id="hud-secs">0</b></span>
+        <span id="hud-miss" hidden title="Hearts missed">✗ <b id="hud-misses">0</b>/<span id="hud-misscap">0</span></span>
         <span id="hud-lives" aria-label="Lives">♥♥♥</span>
       </div>
 
@@ -113,15 +114,10 @@
 
       <p class="toast" id="toast" role="status" aria-live="polite"></p>
 
-      <div class="note" id="note" hidden>
-        <p class="note__label">★ SECRET MESSAGE UNLOCKED ★</p>
-        <p class="note__text">You've beaten the game and caught my heart! &lt;3</p>
-        <div class="note__body">
-          <p>I love you sosomuch and I can't believe I encountered such a wonderful man whom I can proudly call my boyfriend, you're the reason I look forward to tomorrows; just for the chance for me to hear you, see you, and every passing day is a day closer to when I can be with you in real life!</p>
-          <p>I choose you all day everyday, and consider you my one and only soulmate and I'm keen on marrying you one day, even &lt;3</p>
-        </div>
-        <p class="note__close">Kocham cię, ang aking mahal,</p>
-        <p class="note__sign">- Love, Maxine</p>
+      <!-- The secret message has its own section; this slot leads to it. -->
+      <div class="secret-slot" id="secret-slot">
+        <p class="secret-slot__label">★ SECRET MESSAGE ★</p>
+        <button class="btn btn--gold" id="go-secret" type="button" disabled>🔒 OPEN ALL 6 TREASURES</button>
       </div>
 
       <div class="row">
@@ -130,6 +126,49 @@
       </div>
       <button class="reset" id="reset" type="button">reset progress</button>
     </section>
+
+    <!-- ═════════════ SECRET MESSAGE (grand opening) ═════════════ -->
+    <section class="screen screen--secret" id="screen-secret" aria-labelledby="secret-title">
+      <h2 class="visually-hidden" id="secret-title">Secret message</h2>
+
+      <div class="stage" id="stage">
+        <p class="stage__title">★ FINAL TREASURE ★</p>
+        <button class="bigheart" id="bigheart" type="button" aria-label="Open the secret message">
+          <svg class="bigheart__heart" id="bigheart-svg" viewBox="0 0 13 12" shape-rendering="crispEdges" aria-hidden="true"></svg>
+          <svg class="bigheart__lock" viewBox="0 0 7 8" shape-rendering="crispEdges" aria-hidden="true">
+            <rect x="1" y="0" width="5" height="1" fill="#ffd23f"/><rect x="1" y="1" width="1" height="2" fill="#ffd23f"/><rect x="5" y="1" width="1" height="2" fill="#ffd23f"/>
+            <rect x="0" y="3" width="7" height="5" fill="#ffd23f"/><rect x="0" y="7" width="7" height="1" fill="#b8860b"/><rect x="6" y="3" width="1" height="5" fill="#b8860b"/>
+            <rect x="3" y="4" width="1" height="2" fill="#4d2614"/>
+          </svg>
+        </button>
+        <p class="stage__hint blink" id="stage-hint">▶ TAP THE HEART TO OPEN ◀</p>
+      </div>
+
+      <p class="banner" id="banner" hidden>★ SECRET MESSAGE UNLOCKED ★</p>
+
+      <!--
+        EDIT: the secret message. Each line marked data-type is typed out
+        letter by letter during the opening animation.
+      -->
+      <div class="note" id="note" hidden>
+        <p class="note__text" data-type>You've beaten the game and caught my heart! &lt;3</p>
+        <div class="note__body">
+          <p data-type>I love you sosomuch and I can't believe I encountered such a wonderful man whom I can proudly call my boyfriend, you're the reason I look forward to tomorrows; just for the chance for me to hear you, see you, and every passing day is a day closer to when I can be with you in real life!</p>
+          <p data-type>I choose you all day everyday, and consider you my one and only soulmate and I'm keen on marrying you one day, even &lt;3</p>
+        </div>
+        <p class="note__close" data-type>Kocham cię, ang aking mahal,</p>
+        <p class="note__sign" data-type>- Love, Maxine</p>
+        <p class="note__skip" id="note-skip">tap to skip ▸▸</p>
+      </div>
+
+      <div class="row" id="secret-actions" hidden>
+        <button class="btn btn--ghost" id="secret-replay" type="button">↻ REPLAY</button>
+        <button class="btn btn--ghost" data-go="screen-treasures" type="button">◀ TREASURES</button>
+      </div>
+    </section>
+
+    <canvas class="fx" id="fx" aria-hidden="true"></canvas>
+    <div class="flash" id="flash" aria-hidden="true"></div>
 
     <!-- ═════════════ PICTURE VIEWER ═════════════ -->
     <div class="viewer" id="viewer" hidden role="dialog" aria-modal="true" aria-labelledby="viewer-cap">

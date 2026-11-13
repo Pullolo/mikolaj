@@ -6,24 +6,26 @@
   /* ═════════ EDIT: the six levels ═════════
      Rename them after your memories. Tuning knobs:
        goal   hearts to catch            lives  hits from storm clouds allowed
+       miss   hearts you may let fall before it's game over (0 = unlimited)
        speed  base falling speed         spawn  seconds between drops
        cloud  share of drops that are storm clouds (0–1)
-       zig    sideways wobble of hearts  wind   gusts push everything sideways
+       zig    sideways wobble of hearts  wind   strength of gusts (0 = calm)
+       homing how fast clouds drift toward the basket (0 = never)
        time   time limit in seconds (0 = none)
        small  smaller basket                                                  */
   var LEVELS = [
-    { name: "First Hello",    diff: "EASY",      stars: 1, goal: 8,  lives: 3, speed: 60,  spawn: 1.0,  cloud: 0,    zig: 0,  wind: false, time: 0,  small: false,
-      intro: "A gentle start.<br />Catch 8 hearts!" },
-    { name: "Butterflies",    diff: "EASY",      stars: 2, goal: 10, lives: 3, speed: 70,  spawn: 0.9,  cloud: 0.15, zig: 26, wind: false, time: 0,  small: false,
-      intro: "Hearts flutter side to side.<br />Catch 10, dodge the clouds!" },
-    { name: "Rainy Day",      diff: "NORMAL",    stars: 3, goal: 12, lives: 3, speed: 85,  spawn: 0.75, cloud: 0.4,  zig: 0,  wind: false, time: 0,  small: false,
-      intro: "Storm season!<br />Lots of clouds. Catch 12." },
-    { name: "Windy Walk",     diff: "NORMAL",    stars: 3, goal: 12, lives: 3, speed: 80,  spawn: 0.8,  cloud: 0.25, zig: 0,  wind: true,  time: 0,  small: false,
-      intro: "Gusts push everything around.<br />Watch the wind! Catch 12." },
-    { name: "Racing Hearts",  diff: "HARD",      stars: 4, goal: 15, lives: 3, speed: 110, spawn: 0.55, cloud: 0.25, zig: 0,  wind: false, time: 35, small: false,
-      intro: "Beat the clock!<br />15 hearts in 35 seconds." },
-    { name: "Forever",        diff: "LOVE BOSS", stars: 5, goal: 20, lives: 3, speed: 115, spawn: 0.5,  cloud: 0.32, zig: 20, wind: true,  time: 0,  small: true,
-      intro: "The final level.<br />Tiny basket, wind, wobble, storms.<br />Catch 20. I believe in you ♥" },
+    { name: "First Hello",    diff: "EASY",      stars: 1, goal: 12, lives: 3, miss: 0, speed: 80,  spawn: 0.85, cloud: 0.15, zig: 0,  wind: 0,  homing: 0,  time: 0,  small: false,
+      intro: "A warm-up.<br />Catch 12 hearts!" },
+    { name: "Butterflies",    diff: "NORMAL",    stars: 2, goal: 15, lives: 3, miss: 6, speed: 95,  spawn: 0.75, cloud: 0.25, zig: 34, wind: 0,  homing: 0,  time: 0,  small: false,
+      intro: "Hearts flutter side to side.<br />Catch 15 — and don't let<br />6 slip away!" },
+    { name: "Rainy Day",      diff: "NORMAL",    stars: 3, goal: 18, lives: 3, miss: 5, speed: 110, spawn: 0.62, cloud: 0.45, zig: 0,  wind: 0,  homing: 0,  time: 0,  small: false,
+      intro: "Storm season!<br />Clouds everywhere. Catch 18,<br />miss fewer than 5." },
+    { name: "Windy Walk",     diff: "HARD",      stars: 3, goal: 20, lives: 3, miss: 5, speed: 105, spawn: 0.65, cloud: 0.3,  zig: 0,  wind: 80, homing: 0,  time: 0,  small: false,
+      intro: "Strong gusts push everything.<br />Read the wind! Catch 20." },
+    { name: "Racing Hearts",  diff: "HARD",      stars: 4, goal: 24, lives: 2, miss: 0, speed: 140, spawn: 0.42, cloud: 0.3,  zig: 0,  wind: 0,  homing: 0,  time: 32, small: false,
+      intro: "Beat the clock!<br />24 hearts in 32 seconds.<br />Only 2 lives." },
+    { name: "Forever",        diff: "LOVE BOSS", stars: 5, goal: 30, lives: 3, miss: 5, speed: 135, spawn: 0.46, cloud: 0.36, zig: 24, wind: 55, homing: 28, time: 0,  small: true,
+      intro: "The final level.<br />Tiny basket, wind, wobble —<br />and the storms hunt you.<br />Catch 30. I believe in you ♥" },
   ];
 
   var $ = function (id) { return document.getElementById(id); };
@@ -46,6 +48,7 @@
     if (id !== "screen-game") stopGame();
     if (id === "screen-map") renderMap();
     if (id === "screen-treasures") renderTreasures();
+    if (id === "screen-secret") resetSecret(); else stopSecret();
     if (id === "screen-title") $("title-count").textContent = count(save.cleared) + "/6";
     Array.prototype.forEach.call(document.querySelectorAll(".screen"), function (s) {
       s.classList.toggle("is-active", s.id === id);
@@ -194,7 +197,7 @@
 
   var lvl = 0, L = LEVELS[0];
   var player = { sprite: BASKET, w: 0, h: 0, x: 0, y: 0, tx: null };
-  var items = [], score, lives, timeLeft, clock, wind, running = false, last, spawnIn, keys = {}, raf = null, flash = 0;
+  var items = [], score, lives, misses, timeLeft, clock, wind, running = false, last, spawnIn, keys = {}, raf = null, flash = 0;
 
   function loadLevel(i) {
     lvl = i;
@@ -203,6 +206,8 @@
     $("game-sub").textContent = stars(L.stars) + " " + L.diff;
     $("hud-goal").textContent = L.goal;
     $("hud-time").hidden = !L.time;
+    $("hud-miss").hidden = !L.miss;
+    $("hud-misscap").textContent = L.miss;
     player.sprite = L.small ? BASKET_SMALL : BASKET;
     player.w = player.sprite[0].length * PX;
     player.h = player.sprite.length * PX;
@@ -220,6 +225,7 @@
     items = [];
     score = 0;
     lives = L.lives;
+    misses = 0;
     timeLeft = L.time;
     clock = 0;
     wind = 0;
@@ -253,6 +259,7 @@
     $("hud-lives").textContent = l;
     $("hud-lives").setAttribute("aria-label", lives + " lives left");
     if (L.time) $("hud-secs").textContent = Math.ceil(timeLeft);
+    if (L.miss) $("hud-misses").textContent = misses;
   }
 
   function startGame() {
@@ -307,7 +314,7 @@
     }
 
     // Wind: a slow gust that swings left and right.
-    wind = L.wind ? Math.sin(clock * 0.7) * 55 + Math.sin(clock * 1.9) * 15 : 0;
+    wind = L.wind ? Math.sin(clock * 0.7) * L.wind + Math.sin(clock * 1.9) * L.wind * 0.3 : 0;
 
     var speed = 220;
     if (keys.left) player.x -= speed * dt;
@@ -329,6 +336,10 @@
       it.t += dt;
       it.y += it.vy * dt;
       it.bx += wind * dt;
+      if (it.bad && L.homing) {
+        var dx = (player.x + player.w / 2) - (it.bx + it.w / 2);
+        it.bx += Math.max(-1, Math.min(1, dx / 20)) * L.homing * dt;
+      }
       it.x = it.bx + (!it.bad && L.zig ? Math.sin(it.t * 3) * L.zig : 0);
       if (it.x < 0) { it.bx -= it.x; it.x = 0; }
       if (it.x > W - it.w) { it.bx -= it.x - (W - it.w); it.x = W - it.w; }
@@ -353,6 +364,12 @@
         if (score >= L.goal) return win();
       } else if (it.y > H) {
         items.splice(i, 1);
+        if (!it.bad && L.miss) {
+          misses++;
+          beep(220, 0.1, "triangle");
+          hud();
+          if (misses >= L.miss) return lose("Too many hearts slipped away!");
+        }
       }
     }
     if (flash > 0) flash -= dt;
@@ -515,7 +532,10 @@
       u === 0 ? "Beat a level to unlock its treasure." :
       o < u ? "You have treasure waiting. Tap to open!" :
       u < 6 ? "Beat more levels to unlock the rest." : "Every treasure is yours ♥";
-    $("note").hidden = o < 6;
+    var ready = o === 6;
+    $("go-secret").disabled = !ready;
+    $("go-secret").textContent = ready ? "★ OPEN THE SECRET MESSAGE ★" : "🔒 OPEN ALL 6 TREASURES";
+    $("secret-slot").classList.toggle("is-ready", ready);
     $("toast").textContent = "";
   }
 
@@ -528,16 +548,17 @@
   }
   function closeViewer() {
     $("viewer").hidden = true;
-    if (count(save.opened) === 6 && $("note").hidden) revealNote();
+    if (count(save.opened) === 6 && !secretAnnounced) {
+      secretAnnounced = true;
+      renderTreasures();
+      jingle([784, 988, 1175, 1568], 150);
+      setTimeout(function () { $("secret-slot").scrollIntoView({ behavior: "smooth", block: "center" }); }, 50);
+    }
   }
+  var secretAnnounced = false;
   $("viewer-close").addEventListener("click", closeViewer);
   $("viewer").addEventListener("click", function (e) { if (e.target === this) closeViewer(); });
 
-  function revealNote() {
-    $("note").hidden = false;
-    jingle([784, 988, 1175, 1568], 150);
-    setTimeout(function () { $("note").scrollIntoView({ behavior: "smooth", block: "center" }); }, 50);
-  }
 
   Array.prototype.forEach.call(chests, function (chest, i) {
     chest.addEventListener("click", function () {
@@ -563,10 +584,247 @@
     });
   });
 
+
+  /* ───────── Secret message: the grand opening ───────── */
+  var HEART_BIG = [
+    "..ppp...ppp..",
+    ".ppppp.ppppp.",
+    "ppwwppppppppp",
+    "ppwpppppppppd",
+    "ppppppppppppd",
+    "ppppppppppppd",
+    ".ppppppppppd.",
+    "..ppppppppd..",
+    "...ppppppd...",
+    "....ppppd....",
+    ".....ppd.....",
+    "......d......",
+  ];
+  (function buildHeart() {
+    var svg = "";
+    HEART_BIG.forEach(function (row, y) {
+      for (var x = 0; x < row.length; x++) {
+        if (row[x] === ".") continue;
+        svg += '<rect x="' + x + '" y="' + y + '" width="1" height="1" fill="' + PAL[row[x]] + '"/>';
+      }
+    });
+    $("bigheart-svg").innerHTML = svg;
+  })();
+
+  var typed = Array.prototype.map.call(document.querySelectorAll("#note [data-type]"), function (el) {
+    return { el: el, text: el.textContent.replace(/\s+/g, " ").trim() };
+  });
+  var timers = [];
+  var typing = false;
+  var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function later(fn, ms) { timers.push(setTimeout(fn, ms)); }
+  function stopSecret() {
+    timers.forEach(clearTimeout);
+    timers = [];
+    typing = false;
+    fx.stop();
+  }
+
+  function resetSecret() {
+    stopSecret();
+    $("stage").hidden = false;
+    $("stage").className = "stage";
+    $("bigheart").disabled = false;
+    $("stage-hint").textContent = "▶ TAP THE HEART TO OPEN ◀";
+    $("banner").hidden = true;
+    $("note").hidden = true;
+    $("note").classList.remove("is-unrolled", "is-done");
+    $("secret-actions").hidden = true;
+    typed.forEach(function (t) { t.el.textContent = t.text; t.el.classList.remove("is-typing"); });
+  }
+
+  function finishTyping() {
+    typing = false;
+    timers.forEach(clearTimeout);
+    timers = [];
+    typed.forEach(function (t) { t.el.textContent = t.text; t.el.classList.remove("is-typing"); });
+    $("note").classList.add("is-done");
+    $("secret-actions").hidden = false;
+    fx.rain();
+  }
+
+  function typeAll() {
+    typing = true;
+    typed.forEach(function (t) { t.el.textContent = ""; });
+    var n = 0;
+    function line() {
+      if (!typing) return;
+      if (n >= typed.length) return finishTyping();
+      var t = typed[n], k = 0;
+      t.el.classList.add("is-typing");
+      (function ch() {
+        if (!typing) return;
+        k++;
+        t.el.textContent = t.text.slice(0, k);
+        if (k % 3 === 0) beep(1200 + Math.random() * 300, 0.02);
+        if (k < t.text.length) {
+          var c = t.text[k - 1];
+          later(ch, /[.,!;]/.test(c) ? 160 : 26);
+        } else {
+          t.el.classList.remove("is-typing");
+          n++;
+          later(line, 380);
+        }
+      })();
+    }
+    line();
+  }
+
+  $("note").addEventListener("click", function () { if (typing) finishTyping(); });
+
+  $("bigheart").addEventListener("click", function () {
+    var btn = this;
+    btn.disabled = true;
+    var stage = $("stage");
+    $("stage-hint").textContent = "...";
+
+    if (reduceMotion) {
+      stage.hidden = true;
+      $("banner").hidden = false;
+      $("note").hidden = false;
+      $("note").classList.add("is-unrolled");
+      jingle([523, 659, 784, 1047], 120);
+      return finishTyping();
+    }
+
+    // 1. rumble, getting stronger
+    stage.classList.add("is-rumbling");
+    [110, 130, 150, 175, 200, 235, 270, 320].forEach(function (f, i) {
+      later(function () { beep(f, 0.14, "sawtooth"); }, i * 160);
+    });
+    // 2. the lock pops off
+    later(function () {
+      stage.classList.add("is-unlocked");
+      beep(1568, 0.06); later(function () { beep(2093, 0.12); }, 70);
+    }, 1350);
+    // 3. the heart swells…
+    later(function () { stage.classList.add("is-swelling"); beep(300, 0.6, "square", 1200); }, 1750);
+    // 4. …and bursts: white flash + fireworks + fanfare
+    later(function () {
+      var f = $("flash");
+      f.classList.remove("is-on"); void f.offsetWidth; f.classList.add("is-on");
+      var r = $("bigheart").getBoundingClientRect();
+      stage.hidden = true;
+      fx.start(r.left + r.width / 2, r.top + r.height / 2);
+      jingle([523, 523, 523, 659, 784, 659, 784, 1047], 120);
+    }, 2400);
+    // 5. banner drops in
+    later(function () { $("banner").hidden = false; }, 2900);
+    // 6. the letter unrolls, then types itself out
+    later(function () {
+      $("note").hidden = false;
+      void $("note").offsetWidth;
+      $("note").classList.add("is-unrolled");
+      $("note").scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 3700);
+    later(typeAll, 4500);
+  });
+
+  $("secret-replay").addEventListener("click", resetSecret);
+  $("go-secret").addEventListener("click", function () {
+    if (this.disabled) return;
+    beep(880, 0.08);
+    show("screen-secret");
+  });
+
+  /* Pixel fireworks + heart rain on a full-screen canvas */
+  var fx = (function () {
+    var cv = $("fx"), cx = cv.getContext("2d");
+    var S = 3; // one canvas pixel = 3 screen pixels
+    var parts = [], raf = null, lastT = 0, mode = "off", burstLeft = 0, nextBurst = 0, rainIn = 0;
+    var COLORS = ["#ff5c9d", "#ffd23f", "#5ce1e6", "#ffffff", "#b8226a", "#a78bfa"];
+    var MINI = ["pp.pp", "ppppp", ".ppp.", "..p.."];
+
+    function size() {
+      cv.width = Math.ceil(window.innerWidth / S);
+      cv.height = Math.ceil(window.innerHeight / S);
+    }
+    function burst(x, y, n) {
+      var col = COLORS[(Math.random() * COLORS.length) | 0];
+      for (var i = 0; i < n; i++) {
+        var a = Math.random() * Math.PI * 2, v = 25 + Math.random() * 70;
+        parts.push({ x: x, y: y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, g: 40, life: 1 + Math.random() * 0.8,
+          c: Math.random() < 0.7 ? col : COLORS[(Math.random() * COLORS.length) | 0], heart: Math.random() < 0.15 });
+      }
+      beep(90 + Math.random() * 60, 0.25, "sawtooth", 40);
+    }
+    function frame(t) {
+      var dt = Math.min(0.05, (t - lastT) / 1000 || 0);
+      lastT = t;
+      var W2 = cv.width, H2 = cv.height;
+      cx.clearRect(0, 0, W2, H2);
+      if (mode === "show") {
+        nextBurst -= dt;
+        if (burstLeft > 0 && nextBurst <= 0) {
+          burst(W2 * (0.15 + Math.random() * 0.7), H2 * (0.12 + Math.random() * 0.45), 50);
+          burstLeft--;
+          nextBurst = 0.35 + Math.random() * 0.35;
+        }
+      }
+      if (mode === "show" || mode === "rain") {
+        rainIn -= dt;
+        if (rainIn <= 0) {
+          parts.push({ x: Math.random() * W2, y: -4, vx: (Math.random() - 0.5) * 6, vy: 14 + Math.random() * 14, g: 0,
+            life: 99, c: Math.random() < 0.75 ? "#ff5c9d" : "#ffd23f", heart: true, sway: Math.random() * 6 });
+          rainIn = mode === "show" ? 0.12 : 0.4;
+        }
+      }
+      for (var i = parts.length - 1; i >= 0; i--) {
+        var p = parts[i];
+        p.vy += p.g * dt;
+        p.x += p.vx * dt + (p.sway ? Math.sin(t / 400 + p.sway) * 0.15 : 0);
+        p.y += p.vy * dt;
+        p.life -= dt;
+        if (p.life <= 0 || p.y > H2 + 4) { parts.splice(i, 1); continue; }
+        cx.globalAlpha = p.life < 0.4 ? p.life / 0.4 : 1;
+        cx.fillStyle = p.c;
+        if (p.heart) {
+          for (var r = 0; r < 4; r++) for (var k = 0; k < 5; k++)
+            if (MINI[r][k] === "p") cx.fillRect((p.x | 0) + k, (p.y | 0) + r, 1, 1);
+        } else {
+          cx.fillRect(p.x | 0, p.y | 0, 1, 1);
+        }
+      }
+      cx.globalAlpha = 1;
+      if (mode !== "off" || parts.length) raf = requestAnimationFrame(frame);
+      else { raf = null; cv.classList.remove("is-on"); }
+    }
+    function run() {
+      cv.classList.add("is-on");
+      if (!raf) { lastT = performance.now(); raf = requestAnimationFrame(frame); }
+    }
+    window.addEventListener("resize", size);
+    size();
+    return {
+      start: function (x, y) {
+        size();
+        mode = "show"; burstLeft = 9; nextBurst = 0.25;
+        burst(x / S, y / S, 90);
+        run();
+        later(function () { if (mode === "show") mode = "rain"; }, 4200);
+      },
+      rain: function () { if (mode === "off") { mode = "rain"; run(); } },
+      stop: function () {
+        mode = "off"; parts = [];
+        if (raf) cancelAnimationFrame(raf);
+        raf = null;
+        cx.clearRect(0, 0, cv.width, cv.height);
+        cv.classList.remove("is-on");
+      },
+    };
+  })();
+
   $("reset").addEventListener("click", function () {
     if (!window.confirm("Reset all levels and treasures?")) return;
     save = { cleared: [false, false, false, false, false, false], opened: [false, false, false, false, false, false] };
     persist();
+    secretAnnounced = false;
     renderTreasures();
     $("title-count").textContent = "0/6";
   });
