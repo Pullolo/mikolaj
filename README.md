@@ -4,7 +4,7 @@ A tiny retro arcade made for Mikołaj.
 
 1. **Title screen** — "Catch my heart, Mikołaj!", a clickable icon slot
    (→ level select) and a **★ Treasures Unlocked** button.
-2. **Six levels**, each guarding one memory and each harder in its own way:
+2. **Six levels**, each guarding one treasure and each harder in its own way:
 
    | # | Name | Difficulty | Challenge |
    |---|------|------------|-----------|
@@ -18,10 +18,12 @@ A tiny retro arcade made for Mikołaj.
    Each level unlocks after the previous one. Drag on touch screens;
    arrow keys / A-D or the mouse on desktop.
 3. **Treasures Unlocked** — six chests, locked until their level is beaten.
+   Opening one shows its picture and types out a message from Maxine
+   (the messages sit right under each chest in `index.html`).
 4. **Secret message** — once all six chests are open, its own section unlocks
    with a grand opening: a giant locked heart rumbles, the lock pops off, the
-   heart bursts into pixel fireworks, and the letter unrolls and types itself
-   out (tap to skip). The text lives in `index.html`, marked `<!-- EDIT -->`.
+   heart bursts into pixel fireworks, and the letter unrolls with the drawing
+   (`img/secret.jpg`) on top and types itself out (tap to skip). The text lives in `index.html`, marked `<!-- EDIT -->`.
 
 Progress is saved in the browser, so he can come back later
 ("reset progress" at the bottom of the treasures page starts over).

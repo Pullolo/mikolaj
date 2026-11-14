@@ -395,8 +395,40 @@ button:focus-visible { outline: 3px dashed var(--gold); outline-offset: 4px; }
 }
 .viewer__img { display: block; max-width: 100%; max-height: 65vh; max-height: 65dvh; object-fit: contain; background: #000; }
 .viewer__cap { margin: 0; font-size: 12px; color: var(--gold); }
+.viewer { overflow-y: auto; overscroll-behavior: contain; place-items: start center; }
+.viewer__frame { margin: auto; }
+.viewer__img { max-height: 42vh; max-height: 42dvh; }
+.viewer__msg {
+  width: 100%; max-width: 480px; min-height: 4em;
+  background: var(--ink); color: var(--bg);
+  padding: 14px 16px; border: 3px solid #000;
+  box-shadow: inset 0 0 0 3px var(--pink);
+  font-family: var(--mono); font-size: 22px; line-height: 1.2; text-align: left;
+  cursor: pointer;
+}
+.viewer__msg[hidden] { display: none; }
+.viewer__msg p { margin: 0 0 10px; }
+.viewer__msg p:last-child { margin: 0; }
+.viewer__msg .treasure-msg__sign { text-align: right; color: var(--pink-dk); font-size: 24px; }
+.viewer__skip { margin: -6px 0 0; align-self: flex-end; font-family: var(--mono); font-size: 16px; color: #9a8fd0; cursor: pointer; }
+.viewer__skip[hidden] { display: none; }
+.treasure-msg[hidden] { display: none; }
+
+/* The drawing at the top of the secret letter */
+.note__pic {
+  margin: 0 auto 22px; width: min(78%, 340px);
+  background: #fff; padding: 10px 10px 30px;
+  border: 3px solid #000; box-shadow: 6px 6px 0 rgba(0,0,0,.35);
+  transform: rotate(-2deg);
+}
+.note__pic img { display: block; width: 100%; height: auto; }
+.screen--secret .note.is-unrolled .note__pic { animation: polaroid 1.4s steps(8) .8s both; }
+.screen--secret .note.is-unrolled .note__pic img { animation: develop 2.2s steps(10) 1s both; }
+@keyframes polaroid { from { transform: rotate(-12deg) scale(.4); opacity: 0; } to { transform: rotate(-2deg); opacity: 1; } }
+@keyframes develop { from { filter: brightness(2.6) contrast(.3); } to { filter: none; } }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; }
   .screen--secret .note.is-unrolled { transform: none; }
 }
+body:has(.viewer:not([hidden])) .sound { display: none; }

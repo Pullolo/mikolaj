@@ -4,6 +4,7 @@ The six rewards are read from here:
 
 ```
 img/1.png … img/6.png   ← replace these placeholders with your own PNGs (same names)
+img/secret.jpg          ← the drawing shown in the secret message
 img/icon.png            ← optional: replaces the pixel heart on the title screen
 ```
 

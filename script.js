@@ -4,7 +4,7 @@
   "use strict";
 
   /* ═════════ EDIT: the six levels ═════════
-     Rename them after your memories. Tuning knobs:
+     Rename them however you like. Tuning knobs:
        goal   hearts to catch            lives  hits from storm clouds allowed
        miss   hearts you may let fall before it's game over (0 = unlimited)
        speed  base falling speed         spawn  seconds between drops
@@ -539,14 +539,66 @@
     $("toast").textContent = "";
   }
 
-  function openViewer(src, cap) {
+  /* Viewer: picture + the chest's message, typed out letter by letter */
+  var vTimers = [], vTyping = false, vLines = [];
+  function vStop() { vTimers.forEach(clearTimeout); vTimers = []; vTyping = false; }
+  function vFinish() {
+    vStop();
+    vLines.forEach(function (t) { t.el.textContent = t.text; t.el.classList.remove("is-typing"); });
+    $("viewer-skip").hidden = true;
+  }
+  function vType() {
+    vTyping = true;
+    $("viewer-skip").hidden = false;
+    var n = 0;
+    (function line() {
+      if (!vTyping) return;
+      if (n >= vLines.length) return vFinish();
+      var t = vLines[n], k = 0;
+      t.el.classList.add("is-typing");
+      (function ch() {
+        if (!vTyping) return;
+        k++;
+        t.el.textContent = t.text.slice(0, k);
+        if (k % 3 === 0) beep(1200 + Math.random() * 300, 0.02);
+        if (k < t.text.length) {
+          vTimers.push(setTimeout(ch, /[.,!;]/.test(t.text[k - 1]) ? 140 : 24));
+        } else {
+          t.el.classList.remove("is-typing");
+          n++;
+          vTimers.push(setTimeout(line, 350));
+        }
+      })();
+    })();
+  }
+
+  function openViewer(src, cap, msgEl) {
+    vStop();
     $("viewer-img").src = src;
     $("viewer-img").alt = cap;
     $("viewer-cap").textContent = cap;
+    var box = $("viewer-msg");
+    box.innerHTML = "";
+    vLines = [];
+    if (msgEl) {
+      Array.prototype.forEach.call(msgEl.querySelectorAll("p"), function (p) {
+        var el = document.createElement("p");
+        el.className = p.className;
+        box.appendChild(el);
+        vLines.push({ el: el, text: p.textContent.replace(/\s+/g, " ").trim() });
+      });
+    }
+    box.hidden = !vLines.length;
+    $("viewer-skip").hidden = true;
     $("viewer").hidden = false;
+    $("viewer").scrollTop = 0;
     $("viewer-close").focus();
+    if (vLines.length) vTimers.push(setTimeout(vType, 450));
   }
+  $("viewer-msg").addEventListener("click", function () { if (vTyping) vFinish(); });
+  $("viewer-skip").addEventListener("click", function () { if (vTyping) vFinish(); });
   function closeViewer() {
+    vStop();
     $("viewer").hidden = true;
     if (count(save.opened) === 6 && !secretAnnounced) {
       secretAnnounced = true;
@@ -579,7 +631,7 @@
           paintChest(i);
           $("opened").textContent = count(save.opened);
         }
-        openViewer(url, cap);
+        openViewer(url, cap, chest.parentNode.querySelector(".treasure-msg"));
       });
     });
   });
@@ -658,6 +710,7 @@
       if (n >= typed.length) return finishTyping();
       var t = typed[n], k = 0;
       t.el.classList.add("is-typing");
+      if (t.el.getBoundingClientRect().bottom > window.innerHeight - 40) t.el.scrollIntoView({ behavior: "smooth", block: "center" });
       (function ch() {
         if (!typing) return;
         k++;
@@ -723,7 +776,7 @@
       $("note").classList.add("is-unrolled");
       $("note").scrollIntoView({ behavior: "smooth", block: "start" });
     }, 3700);
-    later(typeAll, 4500);
+    later(typeAll, 6000);
   });
 
   $("secret-replay").addEventListener("click", resetSecret);

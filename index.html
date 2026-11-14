@@ -53,7 +53,7 @@
       <header class="bar">
         <h2 class="bar__title" id="map-title">SELECT LEVEL</h2>
       </header>
-      <p class="sub">Each level guards one memory.</p>
+      <p class="sub">Each level guards one treasure.</p>
       <!-- Filled in by script.js from the LEVELS list. -->
       <ol class="levels" id="levels"></ol>
       <div class="row">
@@ -99,17 +99,54 @@
       <p class="counter"><b id="unlocked">0</b>/6 UNLOCKED · <b id="opened">0</b>/6 OPENED</p>
 
       <!--
-        EDIT: the six pictures live at img/1.png … img/6.png.
-        Replace those files with your own PNGs (same names) — nothing
-        else needs changing. Captions are the data-cap attributes below.
+        EDIT: the six treasures. Pictures live at img/1.png … img/6.png
+        (replace those files with your own PNGs, same names). Each chest's
+        message is in the hidden .treasure-msg right below it and is typed
+        out under the picture when the chest is opened.
       -->
       <ul class="chests" id="chests">
-        <li><button class="chest" type="button" data-src="img/1.png" data-cap="Memory #1"><span class="chest__lid"></span><span class="chest__label">01</span></button></li>
-        <li><button class="chest" type="button" data-src="img/2.png" data-cap="Memory #2"><span class="chest__lid"></span><span class="chest__label">02</span></button></li>
-        <li><button class="chest" type="button" data-src="img/3.png" data-cap="Memory #3"><span class="chest__lid"></span><span class="chest__label">03</span></button></li>
-        <li><button class="chest" type="button" data-src="img/4.png" data-cap="Memory #4"><span class="chest__lid"></span><span class="chest__label">04</span></button></li>
-        <li><button class="chest" type="button" data-src="img/5.png" data-cap="Memory #5"><span class="chest__lid"></span><span class="chest__label">05</span></button></li>
-        <li><button class="chest" type="button" data-src="img/6.png" data-cap="Memory #6"><span class="chest__lid"></span><span class="chest__label">06</span></button></li>
+        <li>
+          <button class="chest" type="button" data-src="img/1.png" data-cap="Treasure #1"><span class="chest__lid"></span><span class="chest__label">01</span></button>
+          <div class="treasure-msg" hidden>
+            <p>I love you my sweet boy, I love the times we spend together; especially the calm ones where we just talk about whatever &lt;3</p>
+            <p class="treasure-msg__sign">- Love, Maxine</p>
+          </div>
+        </li>
+        <li>
+          <button class="chest" type="button" data-src="img/2.png" data-cap="Treasure #2"><span class="chest__lid"></span><span class="chest__label">02</span></button>
+          <div class="treasure-msg" hidden>
+            <p>You never fail to send butterflies fluttering in my stomach, everytime I hear your voice I feel a sense of love and calm, I'm so lucky to have you in my life, looking forward to the times when we can talk and spend time together &lt;3</p>
+            <p class="treasure-msg__sign">- Love, Maxine</p>
+          </div>
+        </li>
+        <li>
+          <button class="chest" type="button" data-src="img/3.png" data-cap="Treasure #3"><span class="chest__lid"></span><span class="chest__label">03</span></button>
+          <div class="treasure-msg" hidden>
+            <p>If you're ever feeling down, just know you're never alone and I'm always here for you. Feel free to vent to me anytime baby and I'll always try to cheer you up. Throughout thick and thin I'll always be there for you.</p>
+            <p class="treasure-msg__sign">- Love, Maxine</p>
+          </div>
+        </li>
+        <li>
+          <button class="chest" type="button" data-src="img/4.png" data-cap="Treasure #4"><span class="chest__lid"></span><span class="chest__label">04</span></button>
+          <div class="treasure-msg" hidden>
+            <p>I want to spend my life with you and I don't mean that lightly; I truly do. I want to marry you one day and permanently close our distance. You're the reason I want to excel in life as one day I want to be the one to spoil you alot &lt;3</p>
+            <p class="treasure-msg__sign">- Love, Maxine</p>
+          </div>
+        </li>
+        <li>
+          <button class="chest" type="button" data-src="img/5.png" data-cap="Treasure #5"><span class="chest__lid"></span><span class="chest__label">05</span></button>
+          <div class="treasure-msg" hidden>
+            <p>You're so handsome and I love how you look bby, you're the cutest and most scrumptious man I've ever seen and I wanna give your face a billion kisses and have you covered in lipstick stains!</p>
+            <p class="treasure-msg__sign">- Love, Maxine</p>
+          </div>
+        </li>
+        <li>
+          <button class="chest" type="button" data-src="img/6.png" data-cap="Treasure #6"><span class="chest__lid"></span><span class="chest__label">06</span></button>
+          <div class="treasure-msg" hidden>
+            <p>Just know that whenever I'm offline, I'll always be missing you and thinking of the ways that I could be spending time with you. I love you, Mikołaj. You're the love of my life.</p>
+            <p class="treasure-msg__sign">- Love, Maxine</p>
+          </div>
+        </li>
       </ul>
 
       <p class="toast" id="toast" role="status" aria-live="polite"></p>
@@ -151,6 +188,9 @@
         letter by letter during the opening animation.
       -->
       <div class="note" id="note" hidden>
+        <figure class="note__pic">
+          <img src="img/secret.jpg" alt="A pencil portrait of Mikołaj, drawn by Maxine" />
+        </figure>
         <p class="note__text" data-type>You've beaten the game and caught my heart! &lt;3</p>
         <div class="note__body">
           <p data-type>I love you sosomuch and I can't believe I encountered such a wonderful man whom I can proudly call my boyfriend, you're the reason I look forward to tomorrows; just for the chance for me to hear you, see you, and every passing day is a day closer to when I can be with you in real life!</p>
@@ -173,8 +213,10 @@
     <!-- ═════════════ PICTURE VIEWER ═════════════ -->
     <div class="viewer" id="viewer" hidden role="dialog" aria-modal="true" aria-labelledby="viewer-cap">
       <div class="viewer__frame">
-        <img class="viewer__img" id="viewer-img" alt="" />
         <p class="viewer__cap" id="viewer-cap"></p>
+        <img class="viewer__img" id="viewer-img" alt="" />
+        <div class="viewer__msg" id="viewer-msg"></div>
+        <p class="viewer__skip" id="viewer-skip">tap to skip ▸▸</p>
         <button class="btn" id="viewer-close" type="button">OK ✓</button>
       </div>
     </div>
